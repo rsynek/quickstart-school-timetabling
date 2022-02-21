@@ -16,22 +16,14 @@
 
 package org.acme.schooltimetabling.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 @PlanningEntity
-@Entity
 public class Lesson {
 
     @PlanningId
-    @Id
-    @GeneratedValue
     private Long id;
 
     private String subject;
@@ -39,14 +31,19 @@ public class Lesson {
     private String studentGroup;
 
     @PlanningVariable(valueRangeProviderRefs = "timeslotRange")
-    @ManyToOne
     private Timeslot timeslot;
     @PlanningVariable(valueRangeProviderRefs = "roomRange")
-    @ManyToOne
     private Room room;
 
     // No-arg constructor required for Hibernate and OptaPlanner
     public Lesson() {
+    }
+
+    public Lesson(Long id, String subject, String teacher, String studentGroup) {
+        this.id = id;
+        this.subject = subject;
+        this.teacher = teacher;
+        this.studentGroup = studentGroup;
     }
 
     public Lesson(String subject, String teacher, String studentGroup) {

@@ -19,18 +19,11 @@ package org.acme.schooltimetabling.domain;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
-@Entity
 public class Timeslot {
 
     @PlanningId
-    @Id
-    @GeneratedValue
     private Long id;
 
     private DayOfWeek dayOfWeek;
@@ -39,6 +32,13 @@ public class Timeslot {
 
     // No-arg constructor required for Hibernate
     public Timeslot() {
+    }
+
+    public Timeslot(long id, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+        this.id = id;
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public Timeslot(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {

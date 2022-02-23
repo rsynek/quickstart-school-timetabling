@@ -8,6 +8,7 @@ import org.acme.schooltimetabling.domain.TimeTable;
 import org.acme.schooltimetabling.messaging.SolverEvent;
 import org.acme.schooltimetabling.messaging.SolverEventType;
 import org.acme.schooltimetabling.persistence.TimeTableRepository;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.optaplanner.core.api.solver.SolverManager;
@@ -17,7 +18,8 @@ import io.quarkus.runtime.StartupEvent;
 @ApplicationScoped
 public class EntryPoint {
 
-    private static final Long PROBLEM_ID = 1L;
+    @ConfigProperty(name = "solver.problem-id")
+    Long problemId;
 
     @Channel("solver")
     Emitter<SolverEvent> solverEventEmitter;
@@ -29,11 +31,12 @@ public class EntryPoint {
     SolverManager<TimeTable, Long> solverManager;
 
     void onStart(@Observes StartupEvent event) {
-        TimeTable inputProblem = repository.load(PROBLEM_ID);
-        solverManager.solve(PROBLEM_ID, inputProblem, solution -> {
+        TimeTable inputProblem = repository.load(problemId);
+        System.out.println("Solving problemId " + problemId);
+        solverManager.solve(problemId, inputProblem, solution -> {
             System.out.println("Solving finished: " + solution.getScore());
-            repository.save(PROBLEM_ID, solution);
-            solverEventEmitter.send(new SolverEvent(PROBLEM_ID, SolverEventType.SOLVER_FINISHED));
+            repository.save(problemId, solution);
+            solverEventEmitter.send(new SolverEvent(problemId, SolverEventType.SOLVER_FINISHED));
         });
     }
 }
